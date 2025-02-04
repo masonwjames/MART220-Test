@@ -1,4 +1,4 @@
-// Initial positions for interactive ingredients
+// Start positions for interactive parts
 let porkX = 400, porkY = 300;
 let seaweedX1 = 300, seaweedY1 = 290;
 let seaweedX2 = 480, seaweedY2 = 290;
@@ -46,7 +46,7 @@ function draw() {
   ellipse(eggX1, eggY1, 30, 20);
   ellipse(eggX2, eggY2, 30, 20);
 
-  // Pork (interactive: moves with arrow keys)
+  // Pork (moves with arrow keys)
   fill(210, 105, 60);
   ellipse(porkX, porkY, 80, 40);
   ellipse(porkX - 30, porkY + 30, 80, 40);
@@ -54,32 +54,32 @@ function draw() {
   ellipse(porkX, porkY, 40, 20);
   ellipse(porkX - 30, porkY + 30, 40, 20);
 
-  // Seaweed (interactive: repositioned on mouse click)
+  // Seaweed (repositioned on mouse click)
   fill(34, 139, 34);
   rect(seaweedX1, seaweedY1, 20, 70, 5);
   rect(seaweedX2, seaweedY2, 20, 70, 5);
 
-  // Cake (the central garnish)
+  // Fish Cake
   fill(255);
   ellipse(400, 350, 50, 50);
   fill(255, 105, 180);
   ellipse(400, 350, 25, 25);
 
-  // Title and Name
+  // Title
   fill(0);
   // Title in the upper-left
   textSize(20);
   textAlign(LEFT, TOP);
   text("RAMEN BOWL WITH ITERATION", 10, 10);
   
-  // Your Name in the lower-right, with proper alignment
+  // Name
   textSize(12);
   textAlign(RIGHT, BOTTOM);
   text("MASON RUSEK", width - 10, height - 10);
 }
 
 function keyPressed() {
-  // Use arrow keys to move the pork slices
+  // arrow keys to move the pork slices
   if (keyCode === LEFT_ARROW) porkX -= 10;
   else if (keyCode === RIGHT_ARROW) porkX += 10;
   else if (keyCode === UP_ARROW) porkY -= 10;
@@ -87,10 +87,10 @@ function keyPressed() {
 }
 
 function mousePressed() {
-    // Check if mouse is over Seaweed 1 (rect at seaweedX1, seaweedY1 with width 20, height 70)
+    // Check if mouse is over Seaweed 1
     if (mouseX > seaweedX1 && mouseX < seaweedX1 + 20 && mouseY > seaweedY1 && mouseY < seaweedY1 + 70) {
       draggingSeaweed1 = true;
-      // Calculate the offset so the drag is smooth
+      // Calculate offset so the drag is smooth
       offsetX1 = mouseX - seaweedX1;
       offsetY1 = mouseY - seaweedY1;
     }
@@ -103,7 +103,7 @@ function mousePressed() {
   }
   
   function mouseDragged() {
-    // If dragging seaweed 1, update its position based on mouse movement and offset
+    // If dragging seaweed 1, update its position
     if (draggingSeaweed1) {
       seaweedX1 = mouseX - offsetX1;
       seaweedY1 = mouseY - offsetY1;
