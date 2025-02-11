@@ -4,22 +4,32 @@ let seaweedX1 = 300, seaweedY1 = 290;
 let seaweedX2 = 480, seaweedY2 = 290;
 let eggX1 = 330, eggY1 = 350, eggX2 = 470, eggY2 = 350;
 
+// Variables for seaweed movement
+let seaweedSpeed1X = 1, seaweedSpeed1Y = 0.5;
+let seaweedSpeed2X = -1, seaweedSpeed2Y = 0.3;
+
 function setup() {
   createCanvas(800, 600);
 }
 
 function draw() {
-  background(240);
-  
+  background(173, 216, 230);
+
+  // Draw dark line to separate background from counter
+  stroke(80);
+  strokeWeight(4);
+  line(0, 450, width, 450);
+  noStroke();
+
   // Counter
   fill(200);
   rect(0, 450, width, 150);
 
-  // Drop Shadow
+  // Shadow: cast from bowl onto counter (a more directional shadow)
   fill(0, 0, 0, 50);
-  ellipse(400, 440, 500, 50);
+  ellipse(400, 460, 500, 50);  // Adjust the Y position to make the shadow sit on the counter
 
-  // Bowl
+  // Bowl (Now drawn after shadow)
   fill(50);
   ellipse(400, 400, 500, 200);
   fill(70);
@@ -54,7 +64,20 @@ function draw() {
   ellipse(porkX, porkY, 40, 20);
   ellipse(porkX - 30, porkY + 30, 40, 20);
 
-  // Seaweed (repositioned on mouse click)
+  // Seaweed (moves randomly with smooth but not erratic motion)
+  seaweedX1 += seaweedSpeed1X;
+  seaweedY1 += seaweedSpeed1Y;
+  seaweedX2 += seaweedSpeed2X;
+  seaweedY2 += seaweedSpeed2Y;
+
+  // Add constraints to keep the seaweed inside the bowl
+  if (seaweedX1 < 250 || seaweedX1 > 350) seaweedSpeed1X *= -1;
+  if (seaweedY1 < 240 || seaweedY1 > 320) seaweedSpeed1Y *= -1;
+  
+  if (seaweedX2 < 430 || seaweedX2 > 530) seaweedSpeed2X *= -1;
+  if (seaweedY2 < 240 || seaweedY2 > 320) seaweedSpeed2Y *= -1;
+
+  // Draw seaweed
   fill(34, 139, 34);
   rect(seaweedX1, seaweedY1, 20, 70, 5);
   rect(seaweedX2, seaweedY2, 20, 70, 5);
@@ -85,38 +108,3 @@ function keyPressed() {
   else if (keyCode === UP_ARROW) porkY -= 10;
   else if (keyCode === DOWN_ARROW) porkY += 10;
 }
-
-function mousePressed() {
-    // Check if mouse is over Seaweed 1
-    if (mouseX > seaweedX1 && mouseX < seaweedX1 + 20 && mouseY > seaweedY1 && mouseY < seaweedY1 + 70) {
-      draggingSeaweed1 = true;
-      // Calculate offset so the drag is smooth
-      offsetX1 = mouseX - seaweedX1;
-      offsetY1 = mouseY - seaweedY1;
-    }
-    // Check if mouse is over Seaweed 2
-    if (mouseX > seaweedX2 && mouseX < seaweedX2 + 20 && mouseY > seaweedY2 && mouseY < seaweedY2 + 70) {
-      draggingSeaweed2 = true;
-      offsetX2 = mouseX - seaweedX2;
-      offsetY2 = mouseY - seaweedY2;
-    }
-  }
-  
-  function mouseDragged() {
-    // If dragging seaweed 1, update its position
-    if (draggingSeaweed1) {
-      seaweedX1 = mouseX - offsetX1;
-      seaweedY1 = mouseY - offsetY1;
-    }
-    // If dragging seaweed 2, update its position
-    if (draggingSeaweed2) {
-      seaweedX2 = mouseX - offsetX2;
-      seaweedY2 = mouseY - offsetY2;
-    }
-  }
-  
-  function mouseReleased() {
-    // Stop dragging when the mouse is released
-    draggingSeaweed1 = false;
-    draggingSeaweed2 = false;
-  }
