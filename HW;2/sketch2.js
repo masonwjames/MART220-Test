@@ -1,110 +1,123 @@
-// Start positions for interactive parts
-let porkX = 400, porkY = 300;
-let seaweedX1 = 300, seaweedY1 = 290;
-let seaweedX2 = 480, seaweedY2 = 290;
-let eggX1 = 330, eggY1 = 350, eggX2 = 470, eggY2 = 350;
+let chickenX = 0;
+let chickenY = 0;
+let chickenSizeTop = 80;  // Starting size for the top chicken piece
+let chickenSizeBottom = 70;  // Starting size for the bottom chicken piece
 
-// Variables for seaweed movement
-let seaweedSpeed1X = 1, seaweedSpeed1Y = 0.5;
-let seaweedSpeed2X = -1, seaweedSpeed2Y = 0.3;
+let plateSize = 300;  // Starting size for the plate
+let plateX, plateY;  // Position of the plate
+let plateSpeed = 0.5;  // Speed of plate movement
+let plateSizeSpeed = 0.05;  // Speed of plate resizing
+let minPlateSize = 250;  // Minimum size of the plate (ensures waffle fits)
+let maxPlateSize = 350;  // Maximum size for the plate
+
+let plateSpeedX, plateSpeedY;  // Velocity of plate movement
+let clickCount = 0;  // Track the number of times the E key is pressed
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(400, 400);
+  noFill();
+  
+  // Initial position for chicken and plate
+  chickenX = width / 2;
+  chickenY = height / 2;
+  plateX = width / 2;
+  plateY = height / 2;
+  plateSpeedX = random(-plateSpeed, plateSpeed);
+  plateSpeedY = random(-plateSpeed, plateSpeed);
+}
+
+function randomPlateSizeChange() {
+  // Gradually adjust the plate size randomly within its limits
+  plateSize += random(-1, 1);  // Randomly change size slightly
+  plateSize = constrain(plateSize, minPlateSize, maxPlateSize);  // Keep within size limits
+}
+
+function smoothPlateMovement() {
+  // Smooth random movement for the plate
+  plateX += plateSpeedX;
+  plateY += plateSpeedY;
+
+  // Constrain the plate position to keep it inside the canvas
+  plateX = constrain(plateX, plateSize / 2, width - plateSize / 2);
+  plateY = constrain(plateY, plateSize / 2, height - plateSize / 2);
+
+  // Randomize the movement directions smoothly over time
+  if (frameCount % 60 === 0) {  // Change direction every 60 frames for smoother randomness
+    plateSpeedX = random(-plateSpeed, plateSpeed);
+    plateSpeedY = random(-plateSpeed, plateSpeed);
+  }
 }
 
 function draw() {
-  background(173, 216, 230);
+  background(240); // Clear the canvas every frame to avoid marks
 
-  // Draw dark line to separate background from counter
-  stroke(80);
-  strokeWeight(4);
-  line(0, 450, width, 450);
-  noStroke();
+  // Randomly change plate size and position
+  randomPlateSizeChange();
+  smoothPlateMovement();
 
-  // Counter
-  fill(200);
-  rect(0, 450, width, 150);
-
-  // Shadow: cast from bowl onto counter (a more directional shadow)
-  fill(0, 0, 0, 50);
-  ellipse(400, 460, 500, 50);  // Adjust the Y position to make the shadow sit on the counter
-
-  // Bowl (Now drawn after shadow)
-  fill(50);
-  ellipse(400, 400, 500, 200);
-  fill(70);
-  ellipse(400, 420, 470, 180);
-
-  // Broth
-  fill(255, 204, 153);
-  ellipse(400, 380, 440, 160);
-
-  // Noodles
-  stroke(255, 228, 181);
-  strokeWeight(2);
-  noFill();
-  for (let i = 320; i <= 480; i += 20) {
-    arc(400, 380, 400, 140, radians(200), radians(340));
-  }
-  noStroke();
-
-  // Eggs
-  fill(255, 255, 200);
-  ellipse(eggX1, eggY1, 60, 40);
-  ellipse(eggX2, eggY2, 60, 40);
-  fill(255, 204, 0);
-  ellipse(eggX1, eggY1, 30, 20);
-  ellipse(eggX2, eggY2, 30, 20);
-
-  // Pork (moves with arrow keys)
-  fill(210, 105, 60);
-  ellipse(porkX, porkY, 80, 40);
-  ellipse(porkX - 30, porkY + 30, 80, 40);
-  fill(160, 82, 45);
-  ellipse(porkX, porkY, 40, 20);
-  ellipse(porkX - 30, porkY + 30, 40, 20);
-
-  // Seaweed (moves randomly with smooth but not erratic motion)
-  seaweedX1 += seaweedSpeed1X;
-  seaweedY1 += seaweedSpeed1Y;
-  seaweedX2 += seaweedSpeed2X;
-  seaweedY2 += seaweedSpeed2Y;
-
-  // Add constraints to keep the seaweed inside the bowl
-  if (seaweedX1 < 250 || seaweedX1 > 350) seaweedSpeed1X *= -1;
-  if (seaweedY1 < 240 || seaweedY1 > 320) seaweedSpeed1Y *= -1;
-  
-  if (seaweedX2 < 430 || seaweedX2 > 530) seaweedSpeed2X *= -1;
-  if (seaweedY2 < 240 || seaweedY2 > 320) seaweedSpeed2Y *= -1;
-
-  // Draw seaweed
-  fill(34, 139, 34);
-  rect(seaweedX1, seaweedY1, 20, 70, 5);
-  rect(seaweedX2, seaweedY2, 20, 70, 5);
-
-  // Fish Cake
+  // Plate Outer Edge
   fill(255);
-  ellipse(400, 350, 50, 50);
-  fill(255, 105, 180);
-  ellipse(400, 350, 25, 25);
-
-  // Title
-  fill(0);
-  // Title in the upper-left
-  textSize(20);
-  textAlign(LEFT, TOP);
-  text("RAMEN BOWL WITH ITERATION", 10, 10);
+  stroke(200);
+  strokeWeight(4);
+  ellipse(plateX, plateY, plateSize, plateSize);  // Draw plate with dynamic size
   
-  // Name
-  textSize(12);
-  textAlign(RIGHT, BOTTOM);
-  text("MASON RUSEK", width - 10, height - 10);
+  // Plate Inner Edge (Lip)
+  noFill();
+  stroke(180);
+  strokeWeight(2);
+  ellipse(plateX, plateY, plateSize - 30, plateSize - 30);
+  
+  // Waffle
+  fill(227, 178, 65);
+  stroke(180, 120, 40);
+  rectMode(CENTER);
+  rect(plateX, plateY, 150, 150, 10);
+  
+  // Waffle Grid
+  stroke(180, 120, 40);
+  strokeWeight(4);
+  for (let i = -2; i <= 2; i++) {
+    line(plateX - 75, plateY + i * 30, plateX + 75, plateY + i * 30);
+    line(plateX + i * 30, plateY - 75, plateX + i * 30, plateY + 75);
+  }
+  
+  // Syrup Drizzle (Larger but staying within waffle boundaries)
+  noStroke();
+  fill(139, 69, 19, 200);
+  ellipse(plateX, plateY, 130, 90);      // Main syrup blob
+  ellipse(plateX + 30, plateY + 20, 70, 50);  // Side syrup blob
+  ellipse(plateX - 30, plateY - 20, 65, 45);  // Side syrup blob
+  
+  // Chicken Pieces (Move with plate)
+  if (clickCount < 4) {  // Chicken will disappear after 4 presses of the 'E' key
+    fill(194, 126, 70);
+    stroke(150, 100, 50);
+    strokeWeight(2);
+
+    // Draw chicken pieces centered around the plate
+    ellipse(plateX, plateY - 10, chickenSizeTop, chickenSizeBottom);  // Top chicken piece
+    ellipse(plateX, plateY + 20, chickenSizeTop * 0.9, chickenSizeBottom * 0.9);  // Bottom chicken piece
+  }
+  
+  // Title in upper-left corner
+  stroke(90, 60, 20); // Darker border color
+  strokeWeight(1); // Thinner strokeee
+  textSize(24);
+  textFont('Arial');
+  text("Chicken & Waffles", 15, 32);
+  
+  // Your name in lower-right corner
+  textSize(16);
+  text("Mason Rusek", width - 114, height - 15);
 }
 
 function keyPressed() {
-  // arrow keys to move the pork slices
-  if (keyCode === LEFT_ARROW) porkX -= 10;
-  else if (keyCode === RIGHT_ARROW) porkX += 10;
-  else if (keyCode === UP_ARROW) porkY -= 10;
-  else if (keyCode === DOWN_ARROW) porkY += 10;
+  if (key === 'e' || key === 'E') {
+    if (clickCount < 4) {
+      // Shrink chicken size gradually when 'E' key is pressed
+      chickenSizeTop *= 0.95;
+      chickenSizeBottom *= 0.95;
+      clickCount++;  // Track the number of presses
+    }
+  }
 }
